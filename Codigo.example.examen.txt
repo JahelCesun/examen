@@ -1,0 +1,113 @@
+package com.example.examen
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.examen.ui.theme.ExamenTheme
+
+// Clase de datos Product
+data class Product(
+    val name: String,
+    val price: Double,
+    val description: String,
+    val category: String,
+    val inStock: Boolean,
+    val relatedProducts: List<String>
+)
+
+@Composable
+fun ProductDetail(product: Product) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        // Nombre del producto
+        Text(
+            text = product.name,
+            style = MaterialTheme.typography.headlineSmall, // Usando tipografía de Material3
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Precio en pesos mexicanos
+        Text(
+            text = "Precio: $${product.price.format(2)} MXN",
+            style = MaterialTheme.typography.titleMedium, // Usando tipografía de Material3
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Categoría
+        Text(
+            text = "Categoría: ${product.category}",
+            style = MaterialTheme.typography.bodyLarge, // Usando tipografía de Material3
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Descripción
+        Text(
+            text = product.description,
+            style = MaterialTheme.typography.bodyMedium, // Usando tipografía de Material3
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Disponibilidad
+        Text(
+            text = if (product.inStock) "Disponible" else "Agotado",
+            color = if (product.inStock) Color.Green else Color.Red,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Productos relacionados
+        if (product.relatedProducts.isNotEmpty()) {
+            LazyColumn {
+                items(product.relatedProducts) { relatedProduct ->
+                    Card(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                        Text(
+                            text = relatedProduct,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+            }
+        } else {
+            Text(
+                text = "Sin productos relacionados",
+                style = MaterialTheme.typography.bodyLarge, // Usando tipografía de Material3
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+    }
+}
+
+// Extensión para formato de precio
+fun Double.format(digits: Int) = "%.${digits}f".format(this)
+
+@Composable
+fun MainScreen() {
+    val sampleProduct = Product(
+        name = "Auriculares Inalámbricos",
+        price = 1299.99,
+        description = "Auriculares con cancelación de ruido y batería de 24h.",
+        category = "Electrónica",
+        inStock = true,
+        relatedProducts = listOf("Funda", "Cargador", "Estuche rígido")
+    )
+
+    ProductDetail(product = sampleProduct)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    ExamenTheme {
+        MainScreen()
+    }
+}
